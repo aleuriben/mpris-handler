@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Se necesita tener instalado mpv-mpris para que funcione con mpv tambien
+
 mprislist=($(playerctl --list-all))
 function clearall(){
   num=$(( ${#mprislist[@]} - 1 ))
@@ -15,27 +17,56 @@ function clearall(){
 
 function verify(){
   if [ -f /tmp/player_tmp.ale ]; then
-    actual=$(cat /tmp/player_tmp.ale)
+    actual="$(cat /tmp/player_tmp.ale)"
+    num=1
     for i in ${mprislist[@]}; do
-      if [[ ! "$i" == "$actual" ]]; then
-        return 0
+      if [ $i = $actual ]; then
+        num=0
       fi
     done
-    return 1 
+    return $num 
   fi
 }
 
-if [ ! -f /tmp/player_tmp.alea ] || [ $(verify) -eq 0 ] || [ $1 -eq 1 ]; then
+
+if [ ! -f /tmp/player_tmp.ale ] || ! verify || [ $# -eq 0 ]; then
 
   mpvlist=($(printf '%s\n' "${mprislist[@]}" | grep "mpv"))
   if [ ${#mpvlist[@]} -gt 1 ]; then
     clearall 
   fi
-  player=$(for i in ${mprislist[@]}; do echo -n "$(echo $i | sed 's/\..*//'): "; playerctl -p $i metadata title 2> /dev/null || echo; done | dmenu -p "Controlar audio" -no-custom -only-match -format 'i')
+  player=$(for i in ${mprislist[@]}; do echo -n "$(echo $i | sed 's/\..*//'): "; playerctl -p $i metadata title 2> /dev/null || echo; done | dmenu -p "Controlar audio" -format 'i')
   echo ${mprislist[$player]} > /tmp/player_tmp.ale
-  echo $player
 else 
-  playerctl --list-all
+  if verify && [ $# -gt 0 ]; then
+    act="$(cat /tmp/player_tmp.ale)"
+    case $1 in
+      1)
+        playerctl -p $act position 5-
+        ;;
+      2)
+        playerctl -p $act play-pause
+        ;;
+      3)
+        playerctl -p $act position 5+
+        ;;
+      11)
+        playerctl -p $act position 60-
+        ;;
+      12)
+        playerctl -p $act position 60+
+        ;;
+      21)
+        playerctl -p $act previous
+        ;;
+      23)
+        playerctl -p $act next
+        ;;
+      *)
+        echo ERROR
+        exit 1
+        ;;
+    esac
+  fi
 fi
 
-echo $(verify)
