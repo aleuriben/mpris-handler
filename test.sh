@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Para los avisos de volumen instalar dunst
 # Se necesita tener instalado rofi o se puede modificar para que lo use dmenu
 # Se necesita tener instalado mpv-mpris para que funcione con mpv tambien
 
@@ -8,7 +9,16 @@
 # bindsym XF86AudioNext exec --no-startup-id /path/test.sh 3
 # bindsym XF86AudioPlay exec --no-startup-id /path/test.sh 2
 # bindsym XF86AudioPrev exec --no-startup-id /path/test.sh 1
+# 1 para -5 seg
+# 2 para play/pause
+# 3 para +5 seg
+# 11 para -60 seg
+# 13 para +60 seg
+# 21 para retroceder 1 en el playlist
+# 23 para avanzar 1 en el playlist
 #
+# 51 para disminuir volumen del video (NO DISMINUYE EL GENERAL)
+# 52 para aumentar volumen del video (NO AUMENTA EL GENERAL)
 
 mprislist=($(playerctl --list-all))
 function clearall(){
@@ -61,7 +71,7 @@ else
       11)
         playerctl -p $act position 60-
         ;;
-      12)
+      13)
         playerctl -p $act position 60+
         ;;
       21)
@@ -69,6 +79,35 @@ else
         ;;
       23)
         playerctl -p $act next
+        ;;
+      51|52)
+        
+        vol=$(playerctl --player=$act volume | awk '{printf("%.2f\n", $1*100)}')
+        vol=$(echo $vol | sed 's/\..*//g')
+        
+        case "$1" in
+            51)
+                if [ $vol -le 145 ]; then
+                    playerctl --player=$act volume '0.05+'
+                fi
+                ;;
+            52)
+                playerctl --player=$act volume '0.05-'
+                ;;
+            *)
+                echo ERROR
+                ;;
+        esac
+        
+        if [ $vol -ge 50 ]; then
+            dunstify -r 173 "MPRIS:" "🔊 $vol%"  
+        elif [ $vol -gt 25 ]; then
+            dunstify -r 173 "MPRIS:" "🔉 $vol%"
+        elif [ $vol -ge 5 ]; then
+            dunstify -r 173 "MPRIS:" "🔈 $vol%"
+        else
+            dunstify -r 173 "MPRIS:" "🔇 $vol%"
+        fi
         ;;
       *)
         echo ERROR
