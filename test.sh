@@ -1,6 +1,14 @@
 #!/bin/bash
 
+# Se necesita tener instalado rofi o se puede modificar para que lo use dmenu
 # Se necesita tener instalado mpv-mpris para que funcione con mpv tambien
+
+# USO
+# en i3wm:
+# bindsym XF86AudioNext exec --no-startup-id /path/test.sh 3
+# bindsym XF86AudioPlay exec --no-startup-id /path/test.sh 2
+# bindsym XF86AudioPrev exec --no-startup-id /path/test.sh 1
+#
 
 mprislist=($(playerctl --list-all))
 function clearall(){
