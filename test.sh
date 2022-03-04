@@ -17,8 +17,8 @@
 # 21 para retroceder 1 en el playlist
 # 23 para avanzar 1 en el playlist
 #
-# 51 para disminuir volumen del video (NO DISMINUYE EL GENERAL)
-# 52 para aumentar volumen del video (NO AUMENTA EL GENERAL)
+# 51 para aumentar volumen del video (NO AUMENTA EL GENERAL)
+# 52 para disminuir volumen del video (NO DISMINUYE EL GENERAL)
 
 mprislist=($(playerctl --list-all))
 function clearall(){
