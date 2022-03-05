@@ -58,6 +58,7 @@ if [ ! -f /tmp/player_tmp.ale ] || ! verify || [ $# -eq 0 ]; then
 else 
   if verify && [ $# -gt 0 ]; then
     act="$(cat /tmp/player_tmp.ale)"
+    title="$(playerctl -p $act metadata title 2> /dev/null)"
     case $1 in
       1)
         playerctl -p $act position 5-
@@ -100,13 +101,13 @@ else
         esac
         
         if [ $vol -ge 50 ]; then
-            dunstify -r 173 "MPRIS:" "🔊 $vol%"  
+          dunstify -r 173 "MPRIS ($title):" "🔊 $vol%"  
         elif [ $vol -gt 25 ]; then
-            dunstify -r 173 "MPRIS:" "🔉 $vol%"
+          dunstify -r 173 "MPRIS ($title):" "🔉 $vol%"
         elif [ $vol -ge 5 ]; then
-            dunstify -r 173 "MPRIS:" "🔈 $vol%"
+          dunstify -r 173 "MPRIS ($title):" "🔈 $vol%"
         else
-            dunstify -r 173 "MPRIS:" "🔇 $vol%"
+          dunstify -r 173 "MPRIS ($title):" "🔇 $vol%"
         fi
         ;;
       *)
