@@ -6,9 +6,10 @@
 
 # USO
 # en i3wm:
-# bindsym XF86AudioNext exec --no-startup-id /path/test.sh 3
-# bindsym XF86AudioPlay exec --no-startup-id /path/test.sh 2
-# bindsym XF86AudioPrev exec --no-startup-id /path/test.sh 1
+# bindsym $mod+m exec --no-startup-id /path/mpris-handler.sh
+# bindsym XF86AudioNext exec --no-startup-id /path/mpris-handler.sh 3
+# bindsym XF86AudioPlay exec --no-startup-id /path/mpris-handler.sh 2
+# bindsym XF86AudioPrev exec --no-startup-id /path/mpris-handler.sh 1
 # 1 para -5 seg
 # 2 para play/pause
 # 3 para +5 seg
@@ -16,7 +17,9 @@
 # 13 para +60 seg
 # 21 para retroceder 1 en el playlist
 # 23 para avanzar 1 en el playlist
-#
+
+# Sin argumentos para elegir player a modificar.<<<<<<<<<<<<
+
 # 51 para aumentar volumen del video (NO AUMENTA EL GENERAL)
 # 52 para disminuir volumen del video (NO DISMINUYE EL GENERAL)
 
@@ -90,7 +93,7 @@ else
         ;;
       23)
         playerctl -p $act next
-        dunstify -r 173 "MPRIS ($title):" "⏭ Previous Track"
+        dunstify -r 173 "MPRIS ($title):" "⏭ Next Track"
         ;;
       51|52)
         
@@ -128,14 +131,3 @@ else
     esac
   fi
 fi
-
-        status=$(playerctl --player=mpv status)
-        if [[ $status == "Playing" ]]; then
-            play="▶"
-        elif [[ $status == "Paused" ]]; then
-            play="⏸"
-        else
-            play="⏹"
-            video_title="[No video available]"
-            percentage=0
-        fi
