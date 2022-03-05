@@ -62,24 +62,35 @@ else
     case $1 in
       1)
         playerctl -p $act position 5-
+        dunstify -r 173 "MPRIS ($title):" "⏪ Fast-Rewind -5 seg."
         ;;
       2)
         playerctl -p $act play-pause
+        if [[ "$(playerctl -p $act status)" == "Playing" ]]; then
+          dunstify -r 173 "MPRIS ($title):" "▶ Playing"
+        else
+          dunstify -r 173 "MPRIS ($title):" "⏸ Paused"
+        fi
         ;;
       3)
         playerctl -p $act position 5+
+        dunstify -r 173 "MPRIS ($title):" "⏩ Fast-Forward +5 seg."
         ;;
       11)
         playerctl -p $act position 60-
+        dunstify -r 173 "MPRIS ($title):" "⏪ Fast-Rewind -60 seg."
         ;;
       13)
         playerctl -p $act position 60+
+        dunstify -r 173 "MPRIS ($title):" "⏩ Fast-Forward +60 seg."
         ;;
       21)
         playerctl -p $act previous
+        dunstify -r 173 "MPRIS ($title):" "⏮ Previous Track"
         ;;
       23)
         playerctl -p $act next
+        dunstify -r 173 "MPRIS ($title):" "⏭ Previous Track"
         ;;
       51|52)
         
@@ -118,3 +129,13 @@ else
   fi
 fi
 
+        status=$(playerctl --player=mpv status)
+        if [[ $status == "Playing" ]]; then
+            play="▶"
+        elif [[ $status == "Paused" ]]; then
+            play="⏸"
+        else
+            play="⏹"
+            video_title="[No video available]"
+            percentage=0
+        fi
